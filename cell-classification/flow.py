@@ -17,9 +17,11 @@ class CellClassificationFinetuning(FlowSpec, DataStore, ModelOps):
 
     @step
     def start(self):
-        if not os.path.exists(DATA_DIR):
-            sys.exit(DATA_NOT_FOUND_MESSAGE)
-        self.upload(local_path=DATA_DIR, store_key=os.path.join(DATA_KEY, DATA_DIR))
+        s3_path = os.path.join(DATA_KEY, DATA_DIR)
+        if not self.already_exists(s3_path):
+            if not os.path.exists(DATA_DIR):
+                sys.exit(DATA_NOT_FOUND_MESSAGE)
+            self.upload(local_path=DATA_DIR, store_key=s3_path)
         self.next(self.preprocess_and_finetune)
 
     @kubernetes(gpu=NUM_GPUS, cpu=NUM_CPUS, image=IMAGE)
@@ -36,7 +38,7 @@ class CellClassificationFinetuning(FlowSpec, DataStore, ModelOps):
             traintargetdict_dict,
             evalset_dict,
             organ_list,
-        ) = self.pre_process(train_dataset)
+        ) = self.preprocess(train_dataset)
         for organ in organ_list:
             organ_trainset = trainset_dict[organ]
             organ_evalset = evalset_dict[organ]

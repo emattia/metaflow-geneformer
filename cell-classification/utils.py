@@ -91,7 +91,7 @@ class DataStore:
 
 
 class ModelOps:
-    def pre_process(self, train_dataset):
+    def preprocess(self, train_dataset):
         print(
             "\nPreprocessing data - each organ type represented will be printed sequentially...\n"
         )

@@ -19,3 +19,8 @@ docker build -t geneformer .
 
 ## Iterate
 You can find hyperparameters to tune in `config.py`. 
+
+### Run the workflow
+```
+python flow.py run
+```
