@@ -31,20 +31,22 @@ class CellClassificationFinetuning(FlowSpec, DataStore, ModelOps):
             download_path=DATA_DIR, store_key=os.path.join(DATA_KEY, DATA_DIR)
         )
         train_dataset = load_from_disk(DATA_DIR)
-        trainset_dict, traintargetdict_dict, evalset_dict, organ_list = (
-            self.pre_process(train_dataset)
-        )
-
-        # TMP
-        import subprocess
-        subprocess.run(["pip", "install", "accelerate"])
-
+        (
+            trainset_dict,
+            traintargetdict_dict,
+            evalset_dict,
+            organ_list,
+        ) = self.pre_process(train_dataset)
         for organ in organ_list:
             organ_trainset = trainset_dict[organ]
             organ_evalset = evalset_dict[organ]
             organ_label_dict = traintargetdict_dict[organ]
             output_dir = self.finetune(
-                organ, organ_trainset, organ_evalset, organ_label_dict, MODEL_CHECKPOINT_DIR
+                organ,
+                organ_trainset,
+                organ_evalset,
+                organ_label_dict,
+                MODEL_CHECKPOINT_DIR,
             )
             self.upload(
                 local_path=output_dir,

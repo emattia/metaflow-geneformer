@@ -31,4 +31,4 @@ RUN micromamba install python=3.11 pip -c conda-forge -y && python -m pip instal
 # ADD requirements.txt /deps/generative-models/requirements/requirements.txt
 # RUN python -m pip install -r /deps/generative-models/requirements/requirements.txt
 
-RUN git clone https://huggingface.co/ctheodoris/Geneformer && cd Geneformer && pip install .
+RUN git clone https://huggingface.co/ctheodoris/Geneformer && cd Geneformer && pip install . && pip install accelerate
