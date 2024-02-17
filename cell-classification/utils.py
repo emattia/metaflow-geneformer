@@ -4,6 +4,7 @@ import os
 import shutil
 import subprocess
 from config import *
+from tempfile import TemporaryDirectory
 
 
 class DataStore:
@@ -89,9 +90,23 @@ class DataStore:
             )
         self._download_directory(download_path, store_key)
 
+    def upload_hf_dataset(self, dataset, store_key=""):
+        """
+        Parameters
+        ----------
+        dataset : datasets.Dataset
+            Huggingface dataset to be saved in cloud object storage.
+        store_key : str
+            Key suffixed to the store_root to save the store contents to.
+        """
+        with TemporaryDirectory() as temp_dir: 
+            # OK for small data. For big data, use a different method.
+            dataset.save_to_disk(temp_dir)
+            self.upload(temp_dir, store_key)
+
 
 class ModelOps:
-    def preprocess(self, train_dataset):
+    def _preprocess(self, train_dataset):
         print(
             "\nPreprocessing data - each organ type represented will be printed sequentially...\n"
         )
@@ -201,7 +216,7 @@ class ModelOps:
         macro_f1 = f1_score(labels, preds, average="macro")
         return {"accuracy": acc, "macro_f1": macro_f1}
 
-    def finetune(
+    def _finetune(
         self,
         organ,
         organ_trainset,
